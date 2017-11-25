@@ -5,6 +5,6 @@ namespace Conduit.Features.Tests
     [Route("api/[controller]")]
     public class TestsController
     {
-        public IActionResult Index() => new OkObjectResult("hi");
+        public IActionResult Index() => new OkObjectResult("hi halp");
     }
 }
