@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Conduit.Features.Users
 {
@@ -25,15 +23,15 @@ namespace Conduit.Features.Users
             public LoginDto LoginDto { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command, string>
+        public class Handler : RequestHandler<Command, string>
         {
-            public Task<string> Handle(Command message, CancellationToken cancellationToken)
+            protected override string HandleCore(Command request)
             {
-                if (message.LoginDto.Email == "test" && message.LoginDto.Password == "herpderpwat")
+                if (request.LoginDto.Email == "test" && request.LoginDto.Password == "herpderpwat")
                 {
                     var claims = new[]
                     {
-                        new Claim(ClaimTypes.Name, message.LoginDto.Email)
+                        new Claim(ClaimTypes.Name, request.LoginDto.Email)
                     };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superlongandawesomesecuritykeynoonewillknow"));
@@ -41,10 +39,10 @@ namespace Conduit.Features.Users
 
                     var token = new JwtSecurityToken(issuer: "localhost", audience: "all", claims: claims, expires: DateTime.Now.AddMinutes(30), signingCredentials: creds);
 
-                    return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
+                    return new JwtSecurityTokenHandler().WriteToken(token);
                 }
 
-                return Task.FromResult("u suk");
+                return "u suk";
             }
         }
     }
