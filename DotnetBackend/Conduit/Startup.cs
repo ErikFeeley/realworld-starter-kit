@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
@@ -38,6 +39,7 @@ namespace Conduit
                     options.Authority = "authority"; // not exactly sure what do this
                     options.Audience = "audience"; // not exactly sure what do this
                     options.RequireHttpsMetadata = false;
+                    options.Configuration = new OpenIdConnectConfiguration(); // why the actual eff is this line needed for swagger to work....
                     options.Events = new JwtBearerEvents()
                     {
                         OnAuthenticationFailed = failed =>
@@ -76,28 +78,18 @@ namespace Conduit
                 app.UseDeveloperExceptionPage();
 
             app.UseCors(builder =>
-            {
                 builder.AllowAnyOrigin()
-                    .WithOrigins("*")
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials()
-                    .WithExposedHeaders("content-disposition", "content-type", "api_key", "apiKey", "Authorization", "Bearer");
-            });
+                    .AllowAnyMethod());
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
 
             app.UseMvc();
-            app.UseSwagger(o =>
-            {
-
-            });
+            app.UseSwagger(o => o.RouteTemplate = "swagger/{documentName}/swagger.json");
             app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conduit API V1");
-            });
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conduit API V1"));
         }
     }
 }

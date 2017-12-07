@@ -27,7 +27,7 @@ namespace Conduit.Features.Users
         {
             protected override string HandleCore(Command request)
             {
-                if (request.LoginDto.Email == "test" && request.LoginDto.Password == "herpderpwat")
+                if (request.LoginDto.Email == "test" && request.LoginDto.Password == "test")
                 {
                     var claims = new[]
                     {
